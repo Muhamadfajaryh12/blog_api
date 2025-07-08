@@ -11,9 +11,18 @@ import (
 func main() {
 	r := gin.Default()
 	db := models.ConnectionDatabase()
+
 	userRepo := repository.NewUserRepository(db)
+	tagRepo := repository.NewTagRepository(db)
+	blogRepo := repository.NewBlogRepository(db)
+
 	userHandler := handlers.NewUserHandler(userRepo)
-	routes.UserRoutes(r, userHandler)
+	tagHandler := handlers.NewTagHandler(tagRepo)
+	blogHandler := handlers.NewBlogHandler(blogRepo)
+	
+	routes.UserRoutes(r,userHandler)
+	routes.TagRoute(r,tagHandler)
+	routes.BlogRoutes(r,blogHandler)
 
 	r.Run()
 }

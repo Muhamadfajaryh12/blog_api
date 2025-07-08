@@ -9,8 +9,8 @@ import (
 )
 
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,email" form:"email"`
+	Password string `json:"password" binding:"required" form:"password"`
 }
 
 type UserHandler struct {
@@ -42,7 +42,7 @@ func (h *UserHandler) Register(c *gin.Context){
 
 func (h *UserHandler) Login(c *gin.Context){
 	var input LoginRequest
-	if err:= c.ShouldBindJSON(&input); err != nil{
+	if err:= c.ShouldBind(&input); err != nil{
 		c.JSON(http.StatusBadRequest,gin.H{"error":err.Error()})
 		return
 	}
