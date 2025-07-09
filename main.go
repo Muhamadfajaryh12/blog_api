@@ -15,14 +15,17 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	tagRepo := repository.NewTagRepository(db)
 	blogRepo := repository.NewBlogRepository(db)
+	commentRepo := repository.NewCommentRepository(db)
 
 	userHandler := handlers.NewUserHandler(userRepo)
 	tagHandler := handlers.NewTagHandler(tagRepo)
 	blogHandler := handlers.NewBlogHandler(blogRepo)
+	commentHandler := handlers.NewCommentHandler(commentRepo)
 	
 	routes.UserRoutes(r,userHandler)
 	routes.TagRoute(r,tagHandler)
 	routes.BlogRoutes(r,blogHandler)
+	routes.CommentRouter(r, commentHandler)
 
 	r.Run()
 }

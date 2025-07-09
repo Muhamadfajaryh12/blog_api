@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/muhamadfajaryh12/api_blogs/dto"
 	"github.com/muhamadfajaryh12/api_blogs/models"
 	"github.com/muhamadfajaryh12/api_blogs/repository"
 )
@@ -22,17 +23,25 @@ func NewUserHandler(repo repository.UserRepository) *UserHandler{
 }
 
 func (h *UserHandler) Register(c *gin.Context){
-	var user models.Users
-	if err := c.ShouldBindJSON(&user); err != nil{
+	var input dto.UserDTO
+	if err := c.ShouldBindJSON(&input); err != nil{
 		c.JSON(http.StatusBadRequest,gin.H{"error":err.Error()})
 		return
 	}
+
+	user := models.Users {
+		Email: input.Email,
+		Name: input.Name,
+		Password: input.Password,
+		Role:input.Role,
+	} 
 
 	result,err := h.Repo.Create(user)
 	if err != nil{
 		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusCreated,gin.H{
 		"status":http.StatusCreated,
 		"data":result,

@@ -8,6 +8,7 @@ import (
 type TagRepository interface {
 	Create(tag models.Tags)(models.Tags,error)
 	GetAll(tag []models.Tags)([]models.Tags,error)
+	GetById(id uint64, tag models.Tags)(models.Tags,error)
 	Update(id string, inputTag models.Tags)(models.Tags,error)
 	Delete(id string)(models.Tags, error)
 }
@@ -34,6 +35,15 @@ func (r *tagRepo) GetAll(tag []models.Tags)([]models.Tags,error){
 		return tag,err
 	}
 	return tag,nil
+}
+
+func (r *tagRepo) GetById(id uint64, tag models.Tags)(models.Tags, error){
+	err:= r.db.Preload("Blogs.Users").Preload("Blogs.Tags").First(&tag,id).Error
+	if err != nil {
+		return tag, err
+	}
+
+	return tag, nil
 }
 
 func (r *tagRepo) Update(id string, inputTag models.Tags)(models.Tags,error){

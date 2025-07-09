@@ -2,8 +2,11 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/muhamadfajaryh12/api_blogs/dto"
+	"github.com/muhamadfajaryh12/api_blogs/mapper"
 	"github.com/muhamadfajaryh12/api_blogs/models"
 	"github.com/muhamadfajaryh12/api_blogs/repository"
 )
@@ -17,13 +20,17 @@ func NewTagHandler(repo repository.TagRepository) *TagHandler{
 }
 
 func (h *TagHandler) Create(c *gin.Context){
-	var tag models.Tags
-	err:= c.ShouldBind(&tag)
+	var input dto.TagDTO
+	err:= c.ShouldBind(&input)
 	if err != nil{
 		c.JSON(http.StatusBadRequest,gin.H{"error":err.Error()})
 		return
 	}
 
+	tag:= models.Tags{
+		Tag: input.Tag,
+	}
+	
 	result,err := h.Repo.Create(tag)
 	if err != nil{
 		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
@@ -43,10 +50,37 @@ func (h *TagHandler) GetAll(c *gin.Context){
 	if err != nil{
 		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
 	}
+	var response []dto.TagResponseDTO
+	for _,t := range result {
+		response = append(response, mapper.TagRespose(t))
+	}
 
 	c.JSON(http.StatusOK,gin.H{
-		"data":result,
+		"data":response,
 		"status":http.StatusOK,
+	})
+}
+
+func (h *TagHandler) GetById(c *gin.Context){
+	ParamId := c.Param("id")
+	id, err := strconv.Atoi(ParamId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+	var tag models.Tags
+
+	result,err := h.Repo.GetById(uint64(id),tag)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error":err.Error()})
+		return
+	}
+
+	response := mapper.TagDetailResponse(result)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":http.StatusOK,
+		"data":response,
 	})
 }
 

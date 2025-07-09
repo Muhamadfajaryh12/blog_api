@@ -36,3 +36,27 @@ func SaveFile(fileHeader *multipart.FileHeader, folder string)(string, error){
 
 	return filePath, nil
 }
+
+func DeleteFile(filePath string) error{
+	if filePath == "" {
+		return fmt.Errorf("file path kosong")
+	}
+
+	cleanPath := filepath.Clean(filePath)
+	baseDir := filepath.Join("uploads")
+	
+	relPath, err := filepath.Rel(baseDir, cleanPath)
+	if err != nil || relPath == ".." || len(relPath) >= 2 && relPath[0:2] == ".." {
+		return fmt.Errorf("invalid file path")
+	}
+
+	if _, err := os.Stat(cleanPath); os.IsNotExist(err) {
+		return fmt.Errorf("file not found")
+	}
+
+	if err := os.Remove(cleanPath); err != nil {
+		return fmt.Errorf("failed to delete file: %v", err)
+	}
+
+	return nil
+}

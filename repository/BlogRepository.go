@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"strings"
+
+	"github.com/muhamadfajaryh12/api_blogs/helpers"
 	"github.com/muhamadfajaryh12/api_blogs/models"
 	"gorm.io/gorm"
 )
@@ -8,6 +11,9 @@ import (
 type BlogRepository interface {
 	Create(inputBlog models.Blogs)(models.Blogs, error)
 	GetAll(blog []models.Blogs)([]models.Blogs, error)
+	GetDetail(id uint64, blog models.Blogs)(models.Blogs, error)
+	Update(id uint64, blog models.Blogs)(models.Blogs, error)
+	Delete(id uint64)(models.Blogs, error)
 }
 
 type blogRepo struct {
@@ -27,12 +33,67 @@ func (r *blogRepo) Create(inputBlog models.Blogs)(models.Blogs, error){
 	return inputBlog, nil
 }
 
-
 func (r *blogRepo) GetAll(blog []models.Blogs)([]models.Blogs, error){
-	err:= r.db.Find(&blog).Error
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Find(&blog).Error
 	if err != nil{
 		return blog, err
 	}
-
 	return blog, nil
+}
+
+func (r *blogRepo) GetDetail(id uint64,blog models.Blogs)(models.Blogs, error){
+	err:= r.db.Preload("Tags").Preload("Users").Preload("Comments.Users").First(&blog,id).Error
+	if err != nil{
+		return blog, err
+	}
+	return blog, nil
+}
+
+func (r *blogRepo) Update(id uint64, updateData models.Blogs)(models.Blogs, error ){
+	var blog models.Blogs
+	err:= r.db.First(&blog,id).Error
+	if err != nil {
+		return blog, err
+	}
+
+	blog.Title = updateData.Title
+	blog.Content = updateData.Content
+	if updateData.Image != "" {
+		helpers.DeleteFile(strings.ReplaceAll(blog.Image, "/", "\\"))
+		blog.Image = updateData.Image
+	}
+
+	err = r.db.Save(&blog).Error;
+	if err != nil{
+		return blog,err
+	}
+
+	err = r.db.Model(&blog).Association("Tags").Replace(updateData.Tags)
+	if err != nil{
+		return blog,err
+	}	
+
+	return blog,nil
+}
+
+func (r *blogRepo) Delete(id uint64)(models.Blogs, error){
+	var blog models.Blogs
+	err := r.db.First(&blog,id).Error
+	if err != nil {
+	  return blog,err
+	}
+
+	err = r.db.Model(&blog).Association("Tags").Clear();
+	if err != nil{
+		return blog,err
+	}
+	
+	helpers.DeleteFile(strings.ReplaceAll(blog.Image, "/", "\\"))
+	
+	err = r.db.Delete(&blog).Error
+	if err != nil{
+	return blog, err
+	}
+
+	return blog,nil
 }
