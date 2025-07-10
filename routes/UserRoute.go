@@ -5,7 +5,7 @@ import (
 	"github.com/muhamadfajaryh12/api_blogs/handlers"
 )
 
-func UserRoutes(r *gin.Engine, userHandler *handlers.UserHandler){
+func UserRoutes(r *gin.RouterGroup, userHandler *handlers.UserHandler){
 	users:= r.Group("/users")
 	{
 		users.POST("/register",userHandler.Register)

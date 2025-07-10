@@ -34,7 +34,7 @@ func (r *blogRepo) Create(inputBlog models.Blogs)(models.Blogs, error){
 }
 
 func (r *blogRepo) GetAll(blog []models.Blogs)([]models.Blogs, error){
-	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Find(&blog).Error
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("ID DESc").Find(&blog).Error
 	if err != nil{
 		return blog, err
 	}

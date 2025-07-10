@@ -1,0 +1,313 @@
+basePath: /api/v1
+definitions:
+  dto.ResponseErrorDTO:
+    properties:
+      message:
+        example: Bad request
+        type: string
+      status:
+        example: 400
+        type: integer
+    type: object
+  dto.ResponseSuccessDTO:
+    properties:
+      data: {}
+      message:
+        example: Fetch successfully
+        type: string
+      status:
+        example: 200
+        type: integer
+    type: object
+  dto.TagDTO:
+    properties:
+      tag:
+        type: string
+    required:
+    - tag
+    type: object
+  dto.UserRequestDTO:
+    properties:
+      email:
+        example: email@gmail.com
+        type: string
+      name:
+        example: test
+        type: string
+      password:
+        type: string
+      role:
+        example: admin
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - role
+    type: object
+  handlers.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: fajar@example.com
+    name: API Support
+  description: This is a sample blog API with user, blog, tag, and comment features
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API Blogs Documentation
+  version: "1.0"
+paths:
+  /tags:
+    get:
+      consumes:
+      - application/json
+      description: Get all the Tag
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      summary: Get All Tag
+      tags:
+      - tags
+    post:
+      consumes:
+      - application/json
+      description: Add a new tag
+      parameters:
+      - description: Tag Data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TagDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: Create new Tag
+      tags:
+      - tags
+  /tags/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DELETE the Tag
+      parameters:
+      - description: Tag ID
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: DELETE TAG
+      tags:
+      - tags
+    get:
+      consumes:
+      - application/json
+      description: Get Detail the Tag
+      parameters:
+      - description: Tag ID
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      summary: GET DETAIL TAG
+      tags:
+      - tags
+    put:
+      consumes:
+      - application/json
+      description: UPDATE the Tag
+      parameters:
+      - description: Tag ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Tag update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TagDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: UPDATE TAG
+      tags:
+      - tags
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and get access token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      summary: User login
+      tags:
+      - users
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User registration data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      summary: Register a new user
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -44,6 +44,7 @@ func BlogDetailResponse(blog models.Blogs) dto.BlogDetailResponseDTO{
 			Sender: c.Users.Name,
 		})
 	}
+	
 	return dto.BlogDetailResponseDTO{
 		ID:blog.ID, 
 		Title:  blog.Title,
