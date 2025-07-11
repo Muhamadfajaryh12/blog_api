@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/muhamadfajaryh12/api_blogs/dto"
@@ -20,25 +22,43 @@ func NewBlogHandler(repo repository.BlogRepository) * BlogHandler{
 	return &BlogHandler{Repo: repo}
 }
 
+// Tag godoc
+// @Summary Create Blog
+// @Description create new a blog
+// @Tags Blogs
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param title formData string true "Blog title"
+// @Param content formData string true "Blog content"
+// @Param upload formData file true "Blog image file"
+// @Param user_id formData int true "Author"
+// @Param tags_id formData []int true "Array of Tag IDs"
+// @Success 201 {object} dto.ResponseSuccessDTO
+// @Failure 400 {object} dto.ResponseErrorDTO
+// @Failure 401 {object} dto.ResponseErrorDTO
+// @Failure 500 {object} dto.ResponseErrorDTO
+// @Router /blogs [post]
 func (h *BlogHandler) Create(c *gin.Context){
-	var blog models.Blogs
-	err := c.ShouldBind(&blog)
+	var input dto.BlogRequestDTO
+	var filePath string
+	err := c.ShouldBind(&input)
 	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message: err.Error()})
 		return
 	}
 
 	fileUpload, err := c.FormFile("upload")
 	if err == nil{
-		filePath, err := helpers.SaveFile(fileUpload,"banner")
+		filePath, err = helpers.SaveFile(fileUpload,"banner")
 		if err != nil{
-			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+			helpers.ErrorHandle(c, helpers.BadRequestError{Message: err.Error()})
 			return
 		}
-		blog.Image = filePath
 	}
 
-    tagIDs := c.PostFormArray("tags_id")
+    rawTags := c.PostForm("tags_id")
+	tagIDs := strings.Split(rawTags, ",")
 	var tags []models.Tags
 	for _, idStr := range tagIDs {
 		id, err := strconv.Atoi(idStr)
@@ -47,52 +67,82 @@ func (h *BlogHandler) Create(c *gin.Context){
 		}
 		tags = append(tags, models.Tags{ID: uint64(id)})
 	}
-	blog.Tags = tags
+
+	blog := models.Blogs{
+		Title: input.Title,
+		Content: input.Content,
+		Image:  filePath,
+		UserID: uint(input.UserID),
+		Tags:tags,
+	}
 	
 	result, err := h.Repo.Create(blog)
 	if err != nil{
-		c.JSON(http.StatusInternalServerError, gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-	"message":"Created successfully",
-	"data":result,
-	"status":http.StatusCreated,
+	response := mapper.BlogResponse(result)
+	c.JSON(http.StatusCreated, dto.ResponseSuccessDTO{
+		Status: http.StatusCreated,
+		Message: "Created successfully",
+		Data: response,
 	})
 }
 
+// Tag godoc
+// @Summary Get All Blog
+// @Description Get all the blog
+// @Tags Blogs
+// @Produce json
+// @Success 200 {object} dto.ResponseSuccessDTO
+// @Failure 400 {object} dto.ResponseErrorDTO
+// @Failure 500 {object} dto.ResponseErrorDTO
+// @Router /blogs [get]
 func (h *BlogHandler) GetAll(c *gin.Context){
 	var blogs []models.Blogs
 	result, err := h.Repo.GetAll(blogs)
-
-		if err != nil{
-			c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
-			return
-		}
+	if err != nil{
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
+		return
+	}
 
 	var response []dto.BlogResponseDTO
 	for _, blog := range result {
 		response = append(response, mapper.BlogResponse(blog))
 	}
-		c.JSON(http.StatusOK,gin.H{
-			"data":response,
-			"status":http.StatusOK,
-		})
+		
+	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
+		Status: http.StatusOK,
+		Message: "Fetched successfully",
+		Data: response,
+	})
 }
 
+
+
+// Tag godoc
+// @Summary Get Detail Blog
+// @Description Get detail a blog
+// @Tags Blogs
+// @Produce json
+// @Param id path int true "Blog ID" Format(int64) Example(1)
+// @Success 200 {object} dto.ResponseSuccessDTO
+// @Failure 400 {object} dto.ResponseErrorDTO
+// @Failure 500 {object} dto.ResponseErrorDTO
+// @Router /blogs/{id} [get]
 func (h *BlogHandler) GetDetail(c *gin.Context){
 	ParamId := c.Param("id")
 	id, err := strconv.Atoi(ParamId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message:"Invalid ID"})
 		return
 	}
 	var blog models.Blogs
 
 	result, err := h.Repo.GetDetail(uint64(id), blog)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
 		return
 	}
 
@@ -103,19 +153,40 @@ func (h *BlogHandler) GetDetail(c *gin.Context){
 	})
 }
 
+// Tag godoc
+// @Summary Update Blog
+// @Description update new a blog
+// @Tags Blogs
+// @Accept multipart/form-data
+// @Produce json
+// @Security BearerAuth
+// @Param title formData string true "Blog title"
+// @Param content formData string true "Blog content"
+// @Param upload formData file optional "Blog image file"
+// @Param user_id formData int true "author"
+// @Param tags_id formData []int true "Array of Tag IDs"
+// @Param id path int true "Blog ID"
+// @Success 201 {object} dto.ResponseSuccessDTO
+// @Failure 400 {object} dto.ResponseErrorDTO
+// @Failure 401 {object} dto.ResponseErrorDTO
+// @Failure 500 {object} dto.ResponseErrorDTO
+// @Router /blogs/{id} [put]
 func (h *BlogHandler) Update(c *gin.Context){
 	ParamId := c.Param("id")
 	var blog models.Blogs
-	
+	var input dto.BlogRequestDTO
+	var filePath string
+	var tags []models.Tags
+
 	id, err := strconv.Atoi(ParamId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message: "Invalid ID"})
 		return
 	}
 
-	err = c.ShouldBind(&blog)
+	err = c.ShouldBind(&input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
 		return
 	}
 
@@ -123,49 +194,77 @@ func (h *BlogHandler) Update(c *gin.Context){
 		if err == nil{
 		filePath, err := helpers.SaveFile(fileUpload,"banner")
 		if err != nil{
-			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+			helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
 			return
 		}
 		blog.Image = filePath
 	}
 
-	tagIDs := c.PostFormArray("tags_id")
+    rawTags := c.PostForm("tags_id")
+	tagIDs := strings.Split(rawTags, ",")
 	for _, idStr := range tagIDs {
-		if tagId, err := strconv.Atoi(idStr); err == nil {
-			blog.Tags = append(blog.Tags, models.Tags{ID: uint64(tagId)})
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			continue 
 		}
+		tags = append(tags, models.Tags{ID: uint64(id)})
 	}
-	
+
+	blog = models.Blogs{
+		Title: input.Title,
+		Content: input.Content,
+		Image: filePath,
+		Tags:tags,
+		UserID: uint(input.UserID),
+	}
+
 	result, err := h.Repo.Update(uint64(id), blog)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 	
-	c.JSON(http.StatusOK, gin.H{
-	"message":"Updated successfully",
-	"data":result,
-	"status":http.StatusOK,
+	response := mapper.BlogResponse(result)
+	fmt.Printf("RESULT: %+v\n", result)
+
+	c.JSON(http.StatusOK, dto.ResponseSuccessDTO{
+		Status: http.StatusOK,
+		Message: "Updated successfully",
+		Data: response,
 	})
 }
 
+
+// Tag godoc
+// @Summary Delete Blog
+// @Description Delete a blog
+// @Tags Blogs
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Blog ID" Format(int64) Example(1)
+// @Success 200 {object} dto.ResponseSuccessDTO
+// @Failure 400 {object} dto.ResponseErrorDTO
+// @Failure 401 {object} dto.ResponseErrorDTO
+// @Failure 500 {object} dto.ResponseErrorDTO
+// @Router /blogs/{id} [delete]
 func (h *BlogHandler) Delete(c *gin.Context){
 	ParamId := c.Param("id")
 	id, err := strconv.Atoi(ParamId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message: "Invalid ID"})
 		return
 	}
 
 	result,err := h.Repo.Delete(uint64(id))
 	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-	"message":"Deleted successfully",
-	"data":result,
-	"status":http.StatusOK,
+	response := mapper.BlogDetailResponse(result)
+	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
+		Status:http.StatusOK,
+		Message:"Deleted successfully",
+		Data: response,
 	})
 }

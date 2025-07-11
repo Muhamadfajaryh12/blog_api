@@ -1,11 +1,9 @@
 package middlewares
 
 import (
-	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/muhamadfajaryh12/api_blogs/dto"
 	"github.com/muhamadfajaryh12/api_blogs/helpers"
 )
 
@@ -16,10 +14,9 @@ func Authorization() gin.HandlerFunc{
 
 		claims,err := helpers.VerifyToken(tokenString)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, dto.ResponseErrorDTO{
-				Status:http.StatusUnauthorized,
-				Message: "Unauthorized",
-			})
+			helpers.ErrorHandle(c, helpers.UnauthorizedError{Message: "Unauthorized"})
+			c.Abort()
+			return 
 		}
 
 		c.Set("UserID",claims["user_id"])

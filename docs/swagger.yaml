@@ -1,5 +1,23 @@
 basePath: /api/v1
 definitions:
+  dto.CommentRequestDTO:
+    properties:
+      blod_id:
+        example: 2
+        type: integer
+      content:
+        example: content
+        type: string
+      id:
+        type: integer
+      user_id:
+        example: 1
+        type: integer
+    required:
+    - blod_id
+    - content
+    - user_id
+    type: object
   dto.ResponseErrorDTO:
     properties:
       message:
@@ -22,6 +40,7 @@ definitions:
   dto.TagDTO:
     properties:
       tag:
+        example: Sports
         type: string
     required:
     - tag
@@ -48,8 +67,10 @@ definitions:
   handlers.LoginRequest:
     properties:
       email:
+        example: email@gmail.com
         type: string
       password:
+        example: string
         type: string
     required:
     - email
@@ -68,6 +89,281 @@ info:
   title: API Blogs Documentation
   version: "1.0"
 paths:
+  /blogs:
+    get:
+      description: Get all the blog
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      summary: Get All Blog
+      tags:
+      - Blogs
+    post:
+      consumes:
+      - multipart/form-data
+      description: create new a blog
+      parameters:
+      - description: Blog title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Blog content
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Blog image file
+        in: formData
+        name: upload
+        required: true
+        type: file
+      - description: Author
+        in: formData
+        name: user_id
+        required: true
+        type: integer
+      - collectionFormat: csv
+        description: Array of Tag IDs
+        in: formData
+        items:
+          type: integer
+        name: tags_id
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: Create Blog
+      tags:
+      - Blogs
+  /blogs/{id}:
+    delete:
+      description: Delete a blog
+      parameters:
+      - description: Blog ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: Delete Blog
+      tags:
+      - Blogs
+    get:
+      description: Get detail a blog
+      parameters:
+      - description: Blog ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      summary: Get Detail Blog
+      tags:
+      - Blogs
+    put:
+      consumes:
+      - multipart/form-data
+      description: update new a blog
+      parameters:
+      - description: Blog title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Blog content
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Blog image file
+        in: formData
+        name: upload
+        type: file
+      - description: author
+        in: formData
+        name: user_id
+        required: true
+        type: integer
+      - collectionFormat: csv
+        description: Array of Tag IDs
+        in: formData
+        items:
+          type: integer
+        name: tags_id
+        required: true
+        type: array
+      - description: Blog ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: Update Blog
+      tags:
+      - Blogs
+  /comments:
+    post:
+      consumes:
+      - application/json
+      description: create a new a comment
+      parameters:
+      - description: Comment Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CommentRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: Create Comment
+      tags:
+      - Comments
+  /comments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: create a new a comment
+      parameters:
+      - description: Comment ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: Create Comment
+      tags:
+      - Comments
   /tags:
     get:
       consumes:

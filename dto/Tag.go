@@ -1,7 +1,7 @@
 package dto
 
 type TagDTO struct {
-	Tag string `form:"tag" json:"tag" binding:"required"`
+	Tag string `form:"tag" json:"tag" binding:"required" example:"Sports"`
 }
 
 type TagResponseDTO struct {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/muhamadfajaryh12/api_blogs/dto"
+	"github.com/muhamadfajaryh12/api_blogs/helpers"
 	"github.com/muhamadfajaryh12/api_blogs/mapper"
 	"github.com/muhamadfajaryh12/api_blogs/models"
 	"github.com/muhamadfajaryh12/api_blogs/repository"
@@ -36,10 +37,7 @@ func (h *TagHandler) Create(c *gin.Context){
 	var input dto.TagDTO
 	err:= c.ShouldBind(&input)
 	if err != nil{
-		c.JSON(http.StatusBadRequest,dto.ResponseErrorDTO{
-			Status:http.StatusBadRequest,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
 		return
 	}
 
@@ -49,10 +47,7 @@ func (h *TagHandler) Create(c *gin.Context){
 	
 	result,err := h.Repo.Create(tag)
 	if err != nil{
-		c.JSON(http.StatusInternalServerError,dto.ResponseErrorDTO{
-			Status: http.StatusBadRequest,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "Internal server error"})
 		return
 	}
 
@@ -80,10 +75,7 @@ func (h *TagHandler) GetAll(c *gin.Context){
 
 
 	if err != nil{
-		c.JSON(http.StatusInternalServerError,dto.ResponseErrorDTO{
-			Status: http.StatusBadRequest,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 
@@ -116,20 +108,15 @@ func (h *TagHandler) GetById(c *gin.Context){
 	id, err := strconv.Atoi(ParamId)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest,dto.ResponseErrorDTO{
-			Status:http.StatusBadRequest,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
 		return
 	}
+	
 	var tag models.Tags
 
 	result,err := h.Repo.GetById(uint64(id),tag)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.ResponseErrorDTO{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 
@@ -162,19 +149,13 @@ func (h *TagHandler) Update(c *gin.Context){
 	var inputTag models.Tags
 	if err := c.ShouldBind(&inputTag);
 	err != nil{
-		c.JSON(http.StatusBadRequest,dto.ResponseErrorDTO{
-			Status: http.StatusBadRequest,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
 		return
 	}
 
 	result,err := h.Repo.Update(id, inputTag)
 	if err != nil{
-		c.JSON(http.StatusInternalServerError,dto.ResponseErrorDTO{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 
@@ -203,10 +184,7 @@ func (h *TagHandler) Delete(c *gin.Context){
 
 	result,err := h.Repo.Delete(id)
 	if err != nil{
-		c.JSON(http.StatusInternalServerError,dto.ResponseErrorDTO{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 

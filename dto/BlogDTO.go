@@ -1,11 +1,13 @@
 package dto
 
-type BlogDTO struct {
-	ID      uint64 `json:"id"`
-	Title   string `json:"title" form:"title" binding:"required"`
-	Content string `json:"content" form:"content" binding:"required"`
-	Image   string `json:"image"`
-	UserID  uint64 `json:"user_id" form:"user_id" binding:"required"`
+import "mime/multipart"
+
+type BlogRequestDTO struct {
+	ID      uint64                `json:"id"`
+	Title   string                `json:"title" form:"title" binding:"required" example:"title blog"`
+	Content string                `json:"content" form:"content" binding:"required" example:"content blog"`
+	Upload   *multipart.FileHeader `form:"upload" json:"-"`
+	UserID  uint64                `json:"user_id" form:"user_id" binding:"required" example:"1"`
 }
 
 type BlogResponseDTO struct {

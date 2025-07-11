@@ -11,8 +11,8 @@ import (
 )
 
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email" form:"email"`
-	Password string `json:"password" binding:"required" form:"password"`
+	Email    string `json:"email" binding:"required,email" form:"email" example:"email@gmail.com"`
+	Password string `json:"password" binding:"required" form:"password" example:"string"`
 }
 
 type UserHandler struct {
@@ -37,10 +37,7 @@ func NewUserHandler(repo repository.UserRepository) *UserHandler{
 func (h *UserHandler) Register(c *gin.Context){
 	var input dto.UserRequestDTO
 	if err := c.ShouldBindJSON(&input); err != nil{
-		c.JSON(http.StatusBadRequest,dto.ResponseErrorDTO{
-			Status: http.StatusBadRequest,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
 		return
 	}
 
@@ -53,10 +50,7 @@ func (h *UserHandler) Register(c *gin.Context){
 
 	result,err := h.Repo.Create(user)
 	if err != nil{
-		c.JSON(http.StatusInternalServerError,dto.ResponseErrorDTO{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 
@@ -90,28 +84,20 @@ func (h *UserHandler) Register(c *gin.Context){
 func (h *UserHandler) Login(c *gin.Context){
 	var input LoginRequest
 	if err:= c.ShouldBind(&input); err != nil{
-		c.JSON(http.StatusBadRequest,dto.ResponseErrorDTO{
-			Status: http.StatusBadRequest,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
 		return
 	}
 
 	result,err := h.Repo.Get(input.Email,input.Password)
 	if err != nil{
-		c.JSON(http.StatusUnauthorized,dto.ResponseErrorDTO{
-			Status: http.StatusUnauthorized,
-			Message:"Email or passwort doesn't match",
-		})
+		helpers.ErrorHandle(c, helpers.UnauthorizedError{Message:"Email or password doesn't match"})
 		return 
 	}
 
 	token,err := helpers.GenerateToken(result.ID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,dto.ResponseErrorDTO{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
-		})
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
+		return
 	}
 
 	response := dto.LoginResponseDTO{

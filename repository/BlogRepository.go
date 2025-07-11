@@ -29,7 +29,10 @@ func (r *blogRepo) Create(inputBlog models.Blogs)(models.Blogs, error){
 	if err != nil{
 		return inputBlog, err
 	}
-
+	
+	if err := r.db.Preload("Users").Preload("Tags").First(&inputBlog, inputBlog.ID).Error; err != nil {
+		return inputBlog, err
+	}
 	return inputBlog, nil
 }
 
@@ -51,7 +54,7 @@ func (r *blogRepo) GetDetail(id uint64,blog models.Blogs)(models.Blogs, error){
 
 func (r *blogRepo) Update(id uint64, updateData models.Blogs)(models.Blogs, error ){
 	var blog models.Blogs
-	err:= r.db.First(&blog,id).Error
+	err:= r.db.Preload("Users").Preload("Tags").First(&blog,id).Error
 	if err != nil {
 		return blog, err
 	}
@@ -73,12 +76,17 @@ func (r *blogRepo) Update(id uint64, updateData models.Blogs)(models.Blogs, erro
 		return blog,err
 	}	
 
+	err= r.db.Preload("Users").Preload("Tags").First(&blog,id).Error
+	if err != nil {
+		return blog, err
+	}
+	
 	return blog,nil
 }
 
 func (r *blogRepo) Delete(id uint64)(models.Blogs, error){
 	var blog models.Blogs
-	err := r.db.First(&blog,id).Error
+	err := r.db.Preload("Users").First(&blog,id).Error
 	if err != nil {
 	  return blog,err
 	}
@@ -88,8 +96,12 @@ func (r *blogRepo) Delete(id uint64)(models.Blogs, error){
 		return blog,err
 	}
 	
-	helpers.DeleteFile(strings.ReplaceAll(blog.Image, "/", "\\"))
+	if err := r.db.Where("blog_id = ?", id).Delete(&models.Comments{}).Error; err != nil {
+		return blog, err
+	}
 	
+	helpers.DeleteFile(strings.ReplaceAll(blog.Image, "/", "\\"))
+
 	err = r.db.Delete(&blog).Error
 	if err != nil{
 	return blog, err
