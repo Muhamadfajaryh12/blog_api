@@ -2,12 +2,13 @@ package helpers
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var SecretKey = []byte("secret") // kunci rahasia
+var SecretKey = os.Getenv("JWT_SECRET") // kunci rahasia
 
 func GenerateToken(UserID uint64) (string, error) {
 	claims := jwt.MapClaims{}
