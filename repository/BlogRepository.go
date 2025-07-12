@@ -11,6 +11,8 @@ import (
 type BlogRepository interface {
 	Create(inputBlog models.Blogs)(models.Blogs, error)
 	GetAll(blog []models.Blogs)([]models.Blogs, error)
+	GetTrending(blog []models.Blogs)([]models.Blogs, error)
+	GetLatest(blog []models.Blogs)([]models.Blogs, error)
 	GetDetail(id uint64, blog models.Blogs)(models.Blogs, error)
 	Update(id uint64, blog models.Blogs)(models.Blogs, error)
 	Delete(id uint64)(models.Blogs, error)
@@ -37,8 +39,24 @@ func (r *blogRepo) Create(inputBlog models.Blogs)(models.Blogs, error){
 }
 
 func (r *blogRepo) GetAll(blog []models.Blogs)([]models.Blogs, error){
-	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("ID DESc").Find(&blog).Error
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("ID DESC").Limit(6).Find(&blog).Error
 	if err != nil{
+		return blog, err
+	}
+	return blog, nil
+}
+
+func (r *blogRepo) GetTrending(blog []models.Blogs)([]models.Blogs,error){
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("View DESC").Limit(3).Find(&blog).Error
+		if err != nil{
+		return blog, err
+	}
+	return blog, nil
+}
+
+func (r *blogRepo) GetLatest(blog []models.Blogs)([]models.Blogs,error){
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("CreatedAt DESC").Limit(3).Find(&blog).Error
+		if err != nil{
 		return blog, err
 	}
 	return blog, nil
@@ -46,6 +64,8 @@ func (r *blogRepo) GetAll(blog []models.Blogs)([]models.Blogs, error){
 
 func (r *blogRepo) GetDetail(id uint64,blog models.Blogs)(models.Blogs, error){
 	err:= r.db.Preload("Tags").Preload("Users").Preload("Comments.Users").First(&blog,id).Error
+	r.db.Model(&blog).UpdateColumn("view", blog.View + 1)
+	
 	if err != nil{
 		return blog, err
 	}

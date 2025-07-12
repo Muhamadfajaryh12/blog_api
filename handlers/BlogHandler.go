@@ -101,21 +101,51 @@ func (h *BlogHandler) Create(c *gin.Context){
 // @Router /blogs [get]
 func (h *BlogHandler) GetAll(c *gin.Context){
 	var blogs []models.Blogs
-	result, err := h.Repo.GetAll(blogs)
+	getAll, err := h.Repo.GetAll(blogs)
 	if err != nil{
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
 		return
 	}
 
-	var response []dto.BlogResponseDTO
-	for _, blog := range result {
-		response = append(response, mapper.BlogResponse(blog))
+	getTrending, err := h.Repo.GetTrending(blogs)
+	if err != nil{
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
+		return
 	}
-		
+
+	
+	getLatest, err := h.Repo.GetLatest(blogs)
+	if err != nil{
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
+		return
+	}
+	var
+	 (
+		allResponse []dto.BlogResponseDTO 
+		trendingResponse []dto.BlogResponseDTO
+		latestResponse []dto.BlogResponseDTO
+	)
+
+	for _, blog := range getAll {
+		allResponse = append(allResponse, mapper.BlogResponse(blog))
+	}
+	
+	for _, blog := range getTrending {
+		trendingResponse = append(trendingResponse, mapper.BlogResponse(blog))
+	}
+
+		for _, blog := range getLatest {
+		latestResponse = append(latestResponse, mapper.BlogResponse(blog))
+	}
+	
 	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
 		Status: http.StatusOK,
 		Message: "Fetched successfully",
-		Data: response,
+		Data:gin.H{
+			"all": allResponse,
+			"trending":trendingResponse,
+			"latest":latestResponse,
+		},
 	})
 }
 

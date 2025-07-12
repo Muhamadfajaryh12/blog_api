@@ -19,6 +19,8 @@ func BlogResponse(blog models.Blogs) dto.BlogResponseDTO{
 		Title: blog.Title,
 		Content: blog.Content,
 		Image: blog.Image,
+		View:blog.View,
+		Date:blog.CreatedAt,
 		Author: blog.Users.Name,
 		Tags:tags,
 	}
@@ -50,6 +52,8 @@ func BlogDetailResponse(blog models.Blogs) dto.BlogDetailResponseDTO{
 		Title:  blog.Title,
 		Content: blog.Content,
 		Image: blog.Image,
+		View:blog.View,
+		Date:blog.CreatedAt,
 		Author: blog.Users.Name,
 		Tags: tags,
 		Comment: comments,
