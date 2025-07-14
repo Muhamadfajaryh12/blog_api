@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/muhamadfajaryh12/api_blogs/docs"
 	"github.com/muhamadfajaryh12/api_blogs/handlers"
@@ -27,9 +28,17 @@ import (
 
 func main() {
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+ 	AllowAllOrigins: true,
+    AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+    AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+	}))
+r.Static("/uploads", "./uploads")
+
 	db := models.ConnectionDatabase()
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	
 	
 	userRepo := repository.NewUserRepository(db)
 	tagRepo := repository.NewTagRepository(db)
@@ -49,14 +58,6 @@ func main() {
 		routes.CommentRouter(version, commentHandler)
 	}
 
-	// r.Use(cors.New(cors.Config{
-	// 	AllowOrigins:     []string{"http://localhost:3000"},
-	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-	// 	AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-	// 	ExposeHeaders:    []string{"Content-Length"},
-	// 	AllowCredentials: true,
-	// 	MaxAge:           12 * time.Hour,
-	// }))
-	
-	r.Run()
+
+	r.Run("localhost:8081")
 }

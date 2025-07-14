@@ -16,6 +16,7 @@ type BlogRepository interface {
 	GetDetail(id uint64, blog models.Blogs)(models.Blogs, error)
 	Update(id uint64, blog models.Blogs)(models.Blogs, error)
 	Delete(id uint64)(models.Blogs, error)
+	Search(keyword string, blog []models.Blogs)([]models.Blogs, error)
 }
 
 type blogRepo struct {
@@ -55,7 +56,7 @@ func (r *blogRepo) GetTrending(blog []models.Blogs)([]models.Blogs,error){
 }
 
 func (r *blogRepo) GetLatest(blog []models.Blogs)([]models.Blogs,error){
-	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("CreatedAt DESC").Limit(3).Find(&blog).Error
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Limit(3).Find(&blog).Error
 		if err != nil{
 		return blog, err
 	}
@@ -127,5 +128,13 @@ func (r *blogRepo) Delete(id uint64)(models.Blogs, error){
 	return blog, err
 	}
 
+	return blog,nil
+}
+
+func (r *blogRepo) Search(keyword string, blog []models.Blogs)([]models.Blogs,error){
+	err := r.db.Preload("Tags").Preload("Users").Omit("Comments").Where("title LIKE ?", "%"+keyword+"%").Find(&blog).Error
+	if err != nil {
+		return blog, err
+	}
 	return blog,nil
 }
