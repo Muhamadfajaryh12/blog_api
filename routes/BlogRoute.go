@@ -9,7 +9,7 @@ import (
 func BlogRoutes(r *gin.RouterGroup, blogHandler *handlers.BlogHandler){
 	blogs := r.Group("/blogs")
 	{
-		blogs.GET("/",blogHandler.GetAll)
+		blogs.GET("",blogHandler.GetAll)
 		blogs.GET("/:id",blogHandler.GetDetail)
 		
 		blogsAuth := blogs.Use(middlewares.Authorization())

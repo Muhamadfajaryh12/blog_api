@@ -39,3 +39,4 @@ type BlogDetailResponseDTO struct {
 	} `json:"tags"`
 	Comment []CommentResponseDTO `json:"comments"`
 }
+

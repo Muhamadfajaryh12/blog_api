@@ -10,10 +10,10 @@ import (
 
 type BlogRepository interface {
 	Create(inputBlog models.Blogs)(models.Blogs, error)
-	GetAll(blog []models.Blogs)([]models.Blogs, error)
-	GetTrending(blog []models.Blogs)([]models.Blogs, error)
-	GetLatest(blog []models.Blogs)([]models.Blogs, error)
-	GetDetail(id uint64, blog models.Blogs)(models.Blogs, error)
+	GetAll()([]models.Blogs, error)
+	GetTrending()([]models.Blogs, error)
+	GetLatest()([]models.Blogs, error)
+	GetDetail(id uint64)(models.Blogs, error)
 	Update(id uint64, blog models.Blogs)(models.Blogs, error)
 	Delete(id uint64)(models.Blogs, error)
 	Search(keyword string, blog []models.Blogs)([]models.Blogs, error)
@@ -39,15 +39,17 @@ func (r *blogRepo) Create(inputBlog models.Blogs)(models.Blogs, error){
 	return inputBlog, nil
 }
 
-func (r *blogRepo) GetAll(blog []models.Blogs)([]models.Blogs, error){
-	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("ID DESC").Limit(6).Find(&blog).Error
+func (r *blogRepo) GetAll()([]models.Blogs, error){
+	var blog []models.Blogs
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("ID DESC").Find(&blog).Error
 	if err != nil{
 		return blog, err
 	}
 	return blog, nil
 }
 
-func (r *blogRepo) GetTrending(blog []models.Blogs)([]models.Blogs,error){
+func (r *blogRepo) GetTrending()([]models.Blogs,error){
+	var blog []models.Blogs
 	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("View DESC").Limit(3).Find(&blog).Error
 		if err != nil{
 		return blog, err
@@ -55,7 +57,8 @@ func (r *blogRepo) GetTrending(blog []models.Blogs)([]models.Blogs,error){
 	return blog, nil
 }
 
-func (r *blogRepo) GetLatest(blog []models.Blogs)([]models.Blogs,error){
+func (r *blogRepo) GetLatest()([]models.Blogs,error){
+	var blog []models.Blogs
 	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Limit(3).Find(&blog).Error
 		if err != nil{
 		return blog, err
@@ -63,9 +66,9 @@ func (r *blogRepo) GetLatest(blog []models.Blogs)([]models.Blogs,error){
 	return blog, nil
 }
 
-func (r *blogRepo) GetDetail(id uint64,blog models.Blogs)(models.Blogs, error){
+func (r *blogRepo) GetDetail(id uint64)(models.Blogs, error){
+	var blog models.Blogs
 	err:= r.db.Preload("Tags").Preload("Users").Preload("Comments.Users").First(&blog,id).Error
-	r.db.Model(&blog).UpdateColumn("view", blog.View + 1)
 	
 	if err != nil{
 		return blog, err
@@ -121,6 +124,10 @@ func (r *blogRepo) Delete(id uint64)(models.Blogs, error){
 		return blog, err
 	}
 	
+	if err := r.db.Where("blog_id = ?", id).Delete(&models.ViewBlog{}).Error; err != nil {
+		return blog, err
+	}
+
 	helpers.DeleteFile(strings.ReplaceAll(blog.Image, "/", "\\"))
 
 	err = r.db.Delete(&blog).Error

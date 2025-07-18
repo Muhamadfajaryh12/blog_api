@@ -5,7 +5,7 @@ import (
 	"github.com/muhamadfajaryh12/api_blogs/models"
 )
 
-func BlogResponse(blog models.Blogs) dto.BlogResponseDTO{
+func BlogResponse(blog models.Blogs, viewCount int64 ) dto.BlogResponseDTO{
 	var tags []struct{
 		Tag string `json:"tag"`
 	}
@@ -19,14 +19,14 @@ func BlogResponse(blog models.Blogs) dto.BlogResponseDTO{
 		Title: blog.Title,
 		Content: blog.Content,
 		Image: blog.Image,
-		View:blog.View,
 		Date:blog.CreatedAt,
 		Author: blog.Users.Name,
 		Tags:tags,
+		View:viewCount,
 	}
 }
 
-func BlogDetailResponse(blog models.Blogs) dto.BlogDetailResponseDTO{
+func BlogDetailResponse(blog models.Blogs, viewCount int64) dto.BlogDetailResponseDTO{
 	
 	// Manipulasi data tag
 	var tags []struct{
@@ -52,9 +52,9 @@ func BlogDetailResponse(blog models.Blogs) dto.BlogDetailResponseDTO{
 		Title:  blog.Title,
 		Content: blog.Content,
 		Image: blog.Image,
-		View:blog.View,
 		Date:blog.CreatedAt,
 		Author: blog.Users.Name,
+		View: viewCount,
 		Tags: tags,
 		Comment: comments,
 	}

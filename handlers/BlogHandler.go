@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -9,17 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/muhamadfajaryh12/api_blogs/dto"
 	"github.com/muhamadfajaryh12/api_blogs/helpers"
-	"github.com/muhamadfajaryh12/api_blogs/mapper"
 	"github.com/muhamadfajaryh12/api_blogs/models"
-	"github.com/muhamadfajaryh12/api_blogs/repository"
+	"github.com/muhamadfajaryh12/api_blogs/services"
 )
 
 type BlogHandler struct {
-	Repo repository.BlogRepository
+	blogService services.BlogService
 }
 
-func NewBlogHandler(repo repository.BlogRepository) * BlogHandler{
-	return &BlogHandler{Repo: repo}
+func NewBlogHandler(blogService services.BlogService) * BlogHandler{
+	return &BlogHandler{blogService: blogService}
 }
 
 // Tag godoc
@@ -41,13 +39,12 @@ func NewBlogHandler(repo repository.BlogRepository) * BlogHandler{
 // @Router /blogs [post]
 func (h *BlogHandler) Create(c *gin.Context){
 	var input dto.BlogRequestDTO
-	var filePath string
-	err := c.ShouldBind(&input)
-	if err != nil{
+	if err := c.ShouldBind(&input); err != nil {
 		helpers.ErrorHandle(c, helpers.BadRequestError{Message: err.Error()})
 		return
 	}
-
+	
+	var filePath string
 	fileUpload, err := c.FormFile("upload")
 	if err == nil{
 		filePath, err = helpers.SaveFile(fileUpload,"banner")
@@ -76,19 +73,18 @@ func (h *BlogHandler) Create(c *gin.Context){
 		Tags:tags,
 	}
 	
-	result, err := h.Repo.Create(blog)
+	result, err := h.blogService.Create(blog)
 	if err != nil{
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
 		return
 	}
 
-	response := mapper.BlogResponse(result)
 	c.JSON(http.StatusCreated, dto.ResponseSuccessDTO{
 		Status: http.StatusCreated,
 		Message: "Created successfully",
-		Data: response,
+		Data: result,
 	})
-}
+}	
 
 // Tag godoc
 // @Summary Get All Blog
@@ -100,52 +96,16 @@ func (h *BlogHandler) Create(c *gin.Context){
 // @Failure 500 {object} dto.ResponseErrorDTO
 // @Router /blogs [get]
 func (h *BlogHandler) GetAll(c *gin.Context){
-	var blogs []models.Blogs
-	getAll, err := h.Repo.GetAll(blogs)
-	if err != nil{
-		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
+	blogs,err := h.blogService.GetAll()
+	if err != nil {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
-	}
-
-	getTrending, err := h.Repo.GetTrending(blogs)
-	if err != nil{
-		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
-		return
-	}
-
-	
-	getLatest, err := h.Repo.GetLatest(blogs)
-	if err != nil{
-		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
-		return
-	}
-	var
-	 (
-		allResponse []dto.BlogResponseDTO 
-		trendingResponse []dto.BlogResponseDTO
-		latestResponse []dto.BlogResponseDTO
-	)
-
-	for _, blog := range getAll {
-		allResponse = append(allResponse, mapper.BlogResponse(blog))
-	}
-	
-	for _, blog := range getTrending {
-		trendingResponse = append(trendingResponse, mapper.BlogResponse(blog))
-	}
-
-		for _, blog := range getLatest {
-		latestResponse = append(latestResponse, mapper.BlogResponse(blog))
 	}
 	
 	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
 		Status: http.StatusOK,
 		Message: "Fetched successfully",
-		Data:gin.H{
-			"all": allResponse,
-			"trending":trendingResponse,
-			"latest":latestResponse,
-		},
+		Data:blogs,
 	})
 }
 
@@ -163,22 +123,21 @@ func (h *BlogHandler) GetAll(c *gin.Context){
 // @Router /blogs/{id} [get]
 func (h *BlogHandler) GetDetail(c *gin.Context){
 	ParamId := c.Param("id")
+
 	id, err := strconv.Atoi(ParamId)
 	if err != nil {
 		helpers.ErrorHandle(c, helpers.BadRequestError{Message:"Invalid ID"})
 		return
 	}
-	var blog models.Blogs
 
-	result, err := h.Repo.GetDetail(uint64(id), blog)
+	result, err := h.blogService.GetDetail(uint64(id))
 	if err != nil {
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
 		return
 	}
 
-	response := mapper.BlogDetailResponse(result)
 	c.JSON(http.StatusOK,gin.H{
-		"data":response,
+		"data":result,
 		"status":http.StatusOK,
 	})
 }
@@ -248,19 +207,16 @@ func (h *BlogHandler) Update(c *gin.Context){
 		UserID: uint(input.UserID),
 	}
 
-	result, err := h.Repo.Update(uint64(id), blog)
+	result, err := h.blogService.Update(uint64(id), blog)
 	if err != nil {
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
-	
-	response := mapper.BlogResponse(result)
-	fmt.Printf("RESULT: %+v\n", result)
 
 	c.JSON(http.StatusOK, dto.ResponseSuccessDTO{
 		Status: http.StatusOK,
 		Message: "Updated successfully",
-		Data: response,
+		Data: result,
 	})
 }
 
@@ -285,16 +241,15 @@ func (h *BlogHandler) Delete(c *gin.Context){
 		return
 	}
 
-	result,err := h.Repo.Delete(uint64(id))
+	result,err := h.blogService.Delete(uint64(id))
 	if err != nil{
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
 		return
 	}
 
-	response := mapper.BlogDetailResponse(result)
 	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
 		Status:http.StatusOK,
 		Message:"Deleted successfully",
-		Data: response,
+		Data: result,
 	})
 }

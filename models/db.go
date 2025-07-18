@@ -32,6 +32,6 @@ func ConnectionDatabase() *gorm.DB{
 		log.Fatal("error",err)
 	}
 
-	DB.AutoMigrate(&Users{},&Blogs{},&Tags{},&Comments{})
+	DB.AutoMigrate(&Users{},&Blogs{},&Tags{},&Comments{},&ViewBlog{})
 	return DB
 }

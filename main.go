@@ -8,6 +8,7 @@ import (
 	"github.com/muhamadfajaryh12/api_blogs/models"
 	"github.com/muhamadfajaryh12/api_blogs/repository"
 	"github.com/muhamadfajaryh12/api_blogs/routes"
+	"github.com/muhamadfajaryh12/api_blogs/services"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -29,11 +30,13 @@ import (
 func main() {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
- 	AllowAllOrigins: true,
-    AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-    AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowOrigins:     []string{"*"}, // atau ganti sesuai asal frontend kamu
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
 	}))
-r.Static("/uploads", "./uploads")
+	r.Static("/uploads", "./uploads")
 
 	db := models.ConnectionDatabase()
 	docs.SwaggerInfo.BasePath = "/api/v1"
@@ -44,10 +47,14 @@ r.Static("/uploads", "./uploads")
 	tagRepo := repository.NewTagRepository(db)
 	blogRepo := repository.NewBlogRepository(db)
 	commentRepo := repository.NewCommentRepository(db)
+	viewBlogRepo := repository.NewViewBlogRepository(db)
+
+
+	blogService := services.NewBlogService(blogRepo,viewBlogRepo)
 
 	userHandler := handlers.NewUserHandler(userRepo)
 	tagHandler := handlers.NewTagHandler(tagRepo)
-	blogHandler := handlers.NewBlogHandler(blogRepo)
+	blogHandler := handlers.NewBlogHandler(blogService)
 	commentHandler := handlers.NewCommentHandler(commentRepo)
 	
 	version := r.Group("/api/v1")
