@@ -7,10 +7,10 @@ import (
 
 type TagRepository interface {
 	Create(tag models.Tags)(models.Tags,error)
-	GetAll(tag []models.Tags)([]models.Tags,error)
-	GetById(id uint64, tag models.Tags)(models.Tags,error)
-	Update(id string, inputTag models.Tags)(models.Tags,error)
-	Delete(id string)(models.Tags, error)
+	GetAll()([]models.Tags,error)
+	GetById(id uint64)(models.Tags,error)
+	Update(id uint64, inputTag models.Tags)(models.Tags,error)
+	Delete(id uint64)(models.Tags, error)
 }
 
 type tagRepo struct {
@@ -29,7 +29,8 @@ func (r *tagRepo) Create(tag models.Tags)(models.Tags,error){
 	return tag,nil
 }
 
-func (r *tagRepo) GetAll(tag []models.Tags)([]models.Tags,error){
+func (r *tagRepo) GetAll()([]models.Tags,error){
+	var tag []models.Tags
 	err:= r.db.Find(&tag).Error
 	if err!= nil{
 		return tag,err
@@ -37,7 +38,8 @@ func (r *tagRepo) GetAll(tag []models.Tags)([]models.Tags,error){
 	return tag,nil
 }
 
-func (r *tagRepo) GetById(id uint64, tag models.Tags)(models.Tags, error){
+func (r *tagRepo) GetById(id uint64)(models.Tags, error){
+	var tag models.Tags
 	err:= r.db.Preload("Blogs.Users").Preload("Blogs.Tags").First(&tag,id).Error
 	if err != nil {
 		return tag, err
@@ -46,7 +48,7 @@ func (r *tagRepo) GetById(id uint64, tag models.Tags)(models.Tags, error){
 	return tag, nil
 }
 
-func (r *tagRepo) Update(id string, inputTag models.Tags)(models.Tags,error){
+func (r *tagRepo) Update(id uint64, inputTag models.Tags)(models.Tags,error){
 	var tag models.Tags
 	err:= r.db.First(&tag,id).Error
 	if err != nil{
@@ -61,7 +63,7 @@ func (r *tagRepo) Update(id string, inputTag models.Tags)(models.Tags,error){
 	return tag,nil
 }
 
-func (r *tagRepo) Delete(id string)(models.Tags, error){
+func (r *tagRepo) Delete(id uint64)(models.Tags, error){
 	var tag models.Tags
 	err:= r.db.First(&tag,id).Error
 	if err != nil{

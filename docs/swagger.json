@@ -1,825 +1,963 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "This is a sample blog API with user, blog, tag, and comment features",
-    "title": "API Blogs Documentation",
-    "termsOfService": "http://swagger.io/terms/",
-    "contact": {
-      "name": "API Support",
-      "email": "fajar@example.com"
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample blog API with user, blog, tag, and comment features",
+        "title": "API Blogs Documentation",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "fajar@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
     },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-    },
-    "version": "1.0"
-  },
-  "host": "localhost:8081",
-  "basePath": "/api/v1",
-  "paths": {
-    "/blogs": {
-      "get": {
-        "description": "Get all the blog",
-        "produces": ["application/json"],
-        "tags": ["Blogs"],
-        "summary": "Get All Blog",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "create new a blog",
-        "consumes": ["multipart/form-data"],
-        "produces": ["application/json"],
-        "tags": ["Blogs"],
-        "summary": "Create Blog",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Blog title",
-            "name": "title",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "Blog content",
-            "name": "content",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "file",
-            "description": "Blog image file",
-            "name": "upload",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "description": "Author",
-            "name": "user_id",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "integer"
+    "host": "localhost:8081",
+    "basePath": "/api/v1",
+    "paths": {
+        "/blogs": {
+            "get": {
+                "description": "Get all the blog",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Get All Blog",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
             },
-            "collectionFormat": "csv",
-            "description": "Array of Tag IDs",
-            "name": "tags_id",
-            "in": "formData",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "create new a blog",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Create Blog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Blog title",
+                        "name": "title",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Blog content",
+                        "name": "content",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Blog image file",
+                        "name": "upload",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Author",
+                        "name": "user_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Array of Tag IDs",
+                        "name": "tags_id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      }
-    },
-    "/blogs/{id}": {
-      "get": {
-        "description": "Get detail a blog",
-        "produces": ["application/json"],
-        "tags": ["Blogs"],
-        "summary": "Get Detail Blog",
-        "parameters": [
-          {
-            "type": "integer",
-            "format": "int64",
-            "example": 1,
-            "description": "Blog ID",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      },
-      "put": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "update new a blog",
-        "consumes": ["multipart/form-data"],
-        "produces": ["application/json"],
-        "tags": ["Blogs"],
-        "summary": "Update Blog",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Blog title",
-            "name": "title",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "Blog content",
-            "name": "content",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "file",
-            "description": "Blog image file",
-            "name": "upload",
-            "in": "formData"
-          },
-          {
-            "type": "integer",
-            "description": "author",
-            "name": "user_id",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "array",
-            "items": {
-              "type": "integer"
+        },
+        "/blogs/{id}": {
+            "get": {
+                "description": "Get detail a blog",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Get Detail Blog",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1,
+                        "description": "Blog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
             },
-            "collectionFormat": "csv",
-            "description": "Array of Tag IDs",
-            "name": "tags_id",
-            "in": "formData",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "description": "Blog ID",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "update new a blog",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Update Blog",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Blog title",
+                        "name": "title",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Blog content",
+                        "name": "content",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Blog image file",
+                        "name": "upload",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "author",
+                        "name": "user_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Array of Tag IDs",
+                        "name": "tags_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Blog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a blog",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Delete Blog",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1,
+                        "description": "Blog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
+        },
+        "/comments": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "create a new a comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Create Comment",
+                "parameters": [
+                    {
+                        "description": "Comment Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CommentRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
             }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
+        },
+        "/comments/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete a new a comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete Comment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1,
+                        "description": "Comment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
             }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
+        },
+        "/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "GET DASHBOARD",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "GET DASHBOARD",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
             }
-          }
+        },
+        "/tags": {
+            "get": {
+                "description": "Get all the Tag",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Get All Tag",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a new tag",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Create new Tag",
+                "parameters": [
+                    {
+                        "description": "Tag Data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TagDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/{id}": {
+            "get": {
+                "description": "Get Detail the Tag",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "GET DETAIL TAG",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Tag ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "UPDATE the Tag",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "UPDATE TAG",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1,
+                        "description": "Tag ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Tag update data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TagDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "DELETE the Tag",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tags"
+                ],
+                "summary": "DELETE TAG",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Tag ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "description": "Authenticate user and get access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/register": {
+            "post": {
+                "description": "Create a new user account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User registration data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            }
         }
-      },
-      "delete": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "Delete a blog",
-        "produces": ["application/json"],
-        "tags": ["Blogs"],
-        "summary": "Delete Blog",
-        "parameters": [
-          {
-            "type": "integer",
-            "format": "int64",
-            "example": 1,
-            "description": "Blog ID",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      }
     },
-    "/comments": {
-      "post": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "create a new a comment",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["Comments"],
-        "summary": "Create Comment",
-        "parameters": [
-          {
-            "description": "Comment Data",
-            "name": "request",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dto.CommentRequestDTO"
+    "definitions": {
+        "dto.CommentRequestDTO": {
+            "type": "object",
+            "required": [
+                "blod_id",
+                "content",
+                "user_id"
+            ],
+            "properties": {
+                "blod_id": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "content": {
+                    "type": "string",
+                    "example": "content"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
+                }
             }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
+        },
+        "dto.ResponseErrorDTO": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Bad request"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 400
+                }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
+        },
+        "dto.ResponseSuccessDTO": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string",
+                    "example": "Fetch successfully"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 200
+                }
             }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
+        },
+        "dto.TagDTO": {
+            "type": "object",
+            "required": [
+                "tag"
+            ],
+            "properties": {
+                "tag": {
+                    "type": "string",
+                    "example": "Sports"
+                }
             }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
+        },
+        "dto.UserRequestDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "role"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "email@gmail.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "admin"
+                }
             }
-          }
+        },
+        "handlers.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "email@gmail.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "string"
+                }
+            }
         }
-      }
     },
-    "/comments/{id}": {
-      "delete": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "create a new a comment",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["Comments"],
-        "summary": "Create Comment",
-        "parameters": [
-          {
-            "type": "integer",
-            "format": "int64",
-            "example": 1,
-            "description": "Comment ID",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
-      }
-    },
-    "/tags": {
-      "get": {
-        "description": "Get all the Tag",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["tags"],
-        "summary": "Get All Tag",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "Add a new tag",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["tags"],
-        "summary": "Create new Tag",
-        "parameters": [
-          {
-            "description": "Tag Data",
-            "name": "input",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dto.TagDTO"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      }
-    },
-    "/tags/{id}": {
-      "get": {
-        "description": "Get Detail the Tag",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["tags"],
-        "summary": "GET DETAIL TAG",
-        "parameters": [
-          {
-            "type": "integer",
-            "example": 1,
-            "description": "Tag ID",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      },
-      "put": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "UPDATE the Tag",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["tags"],
-        "summary": "UPDATE TAG",
-        "parameters": [
-          {
-            "type": "integer",
-            "format": "int64",
-            "example": 1,
-            "description": "Tag ID",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "description": "Tag update data",
-            "name": "request",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dto.TagDTO"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      },
-      "delete": {
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "description": "DELETE the Tag",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["tags"],
-        "summary": "DELETE TAG",
-        "parameters": [
-          {
-            "type": "integer",
-            "example": 1,
-            "description": "Tag ID",
-            "name": "id",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      }
-    },
-    "/users/login": {
-      "post": {
-        "description": "Authenticate user and get access token",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["users"],
-        "summary": "User login",
-        "parameters": [
-          {
-            "description": "Login credentials",
-            "name": "input",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/handlers.LoginRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      }
-    },
-    "/users/register": {
-      "post": {
-        "description": "Create a new user account",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "tags": ["users"],
-        "summary": "Register a new user",
-        "parameters": [
-          {
-            "description": "User registration data",
-            "name": "input",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dto.UserRequestDTO"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseSuccessDTO"
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/dto.ResponseErrorDTO"
-            }
-          }
-        }
-      }
     }
-  },
-  "definitions": {
-    "dto.CommentRequestDTO": {
-      "type": "object",
-      "required": ["blod_id", "content", "user_id"],
-      "properties": {
-        "blod_id": {
-          "type": "integer",
-          "example": 2
-        },
-        "content": {
-          "type": "string",
-          "example": "content"
-        },
-        "id": {
-          "type": "integer"
-        },
-        "user_id": {
-          "type": "integer",
-          "example": 1
-        }
-      }
-    },
-    "dto.ResponseErrorDTO": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string",
-          "example": "Bad request"
-        },
-        "status": {
-          "type": "integer",
-          "example": 400
-        }
-      }
-    },
-    "dto.ResponseSuccessDTO": {
-      "type": "object",
-      "properties": {
-        "data": {},
-        "message": {
-          "type": "string",
-          "example": "Fetch successfully"
-        },
-        "status": {
-          "type": "integer",
-          "example": 200
-        }
-      }
-    },
-    "dto.TagDTO": {
-      "type": "object",
-      "required": ["tag"],
-      "properties": {
-        "tag": {
-          "type": "string",
-          "example": "Sports"
-        }
-      }
-    },
-    "dto.UserRequestDTO": {
-      "type": "object",
-      "required": ["email", "name", "password", "role"],
-      "properties": {
-        "email": {
-          "type": "string",
-          "example": "email@gmail.com"
-        },
-        "name": {
-          "type": "string",
-          "example": "test"
-        },
-        "password": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string",
-          "example": "admin"
-        }
-      }
-    },
-    "handlers.LoginRequest": {
-      "type": "object",
-      "required": ["email", "password"],
-      "properties": {
-        "email": {
-          "type": "string",
-          "example": "email@gmail.com"
-        },
-        "password": {
-          "type": "string",
-          "example": "string"
-        }
-      }
-    }
-  },
-  "securityDefinitions": {
-    "BearerAuth": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
-    }
-  }
 }

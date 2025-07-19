@@ -14,9 +14,9 @@ definitions:
         example: 1
         type: integer
     required:
-      - blod_id
-      - content
-      - user_id
+    - blod_id
+    - content
+    - user_id
     type: object
   dto.ResponseErrorDTO:
     properties:
@@ -43,7 +43,7 @@ definitions:
         example: Sports
         type: string
     required:
-      - tag
+    - tag
     type: object
   dto.UserRequestDTO:
     properties:
@@ -59,10 +59,10 @@ definitions:
         example: admin
         type: string
     required:
-      - email
-      - name
-      - password
-      - role
+    - email
+    - name
+    - password
+    - role
     type: object
   handlers.LoginRequest:
     properties:
@@ -73,8 +73,8 @@ definitions:
         example: string
         type: string
     required:
-      - email
-      - password
+    - email
+    - password
     type: object
 host: localhost:8081
 info:
@@ -93,514 +93,543 @@ paths:
     get:
       description: Get all the blog
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       summary: Get All Blog
       tags:
-        - Blogs
+      - Blogs
     post:
       consumes:
-        - multipart/form-data
+      - multipart/form-data
       description: create new a blog
       parameters:
-        - description: Blog title
-          in: formData
-          name: title
-          required: true
-          type: string
-        - description: Blog content
-          in: formData
-          name: content
-          required: true
-          type: string
-        - description: Blog image file
-          in: formData
-          name: upload
-          required: true
-          type: file
-        - description: Author
-          in: formData
-          name: user_id
-          required: true
+      - description: Blog title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Blog content
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Blog image file
+        in: formData
+        name: upload
+        required: true
+        type: file
+      - description: Author
+        in: formData
+        name: user_id
+        required: true
+        type: integer
+      - collectionFormat: csv
+        description: Array of Tag IDs
+        in: formData
+        items:
           type: integer
-        - collectionFormat: csv
-          description: Array of Tag IDs
-          in: formData
-          items:
-            type: integer
-          name: tags_id
-          required: true
-          type: array
+        name: tags_id
+        required: true
+        type: array
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Create Blog
       tags:
-        - Blogs
+      - Blogs
   /blogs/{id}:
     delete:
       description: Delete a blog
       parameters:
-        - description: Blog ID
-          example: 1
-          format: int64
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Blog ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Delete Blog
       tags:
-        - Blogs
+      - Blogs
     get:
       description: Get detail a blog
       parameters:
-        - description: Blog ID
-          example: 1
-          format: int64
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Blog ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       summary: Get Detail Blog
       tags:
-        - Blogs
+      - Blogs
     put:
       consumes:
-        - multipart/form-data
+      - multipart/form-data
       description: update new a blog
       parameters:
-        - description: Blog title
-          in: formData
-          name: title
-          required: true
-          type: string
-        - description: Blog content
-          in: formData
-          name: content
-          required: true
-          type: string
-        - description: Blog image file
-          in: formData
-          name: upload
-          type: file
-        - description: author
-          in: formData
-          name: user_id
-          required: true
+      - description: Blog title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Blog content
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Blog image file
+        in: formData
+        name: upload
+        type: file
+      - description: author
+        in: formData
+        name: user_id
+        required: true
+        type: integer
+      - collectionFormat: csv
+        description: Array of Tag IDs
+        in: formData
+        items:
           type: integer
-        - collectionFormat: csv
-          description: Array of Tag IDs
-          in: formData
-          items:
-            type: integer
-          name: tags_id
-          required: true
-          type: array
-        - description: Blog ID
-          in: path
-          name: id
-          required: true
-          type: integer
+        name: tags_id
+        required: true
+        type: array
+      - description: Blog ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Update Blog
       tags:
-        - Blogs
+      - Blogs
   /comments:
     post:
       consumes:
-        - application/json
+      - application/json
       description: create a new a comment
       parameters:
-        - description: Comment Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/dto.CommentRequestDTO"
+      - description: Comment Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CommentRequestDTO'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Create Comment
       tags:
-        - Comments
+      - Comments
   /comments/{id}:
     delete:
       consumes:
-        - application/json
-      description: create a new a comment
+      - application/json
+      description: Delete a new a comment
       parameters:
-        - description: Comment ID
-          example: 1
-          format: int64
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Comment ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
-      summary: Create Comment
+      - BearerAuth: []
+      summary: Delete Comment
       tags:
-        - Comments
+      - Comments
+  /dashboard:
+    get:
+      consumes:
+      - application/json
+      description: GET DASHBOARD
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseErrorDTO'
+      security:
+      - BearerAuth: []
+      summary: GET DASHBOARD
+      tags:
+      - Dashboard
   /tags:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get all the Tag
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       summary: Get All Tag
       tags:
-        - tags
+      - tags
     post:
       consumes:
-        - application/json
+      - application/json
       description: Add a new tag
       parameters:
-        - description: Tag Data
-          in: body
-          name: input
-          required: true
-          schema:
-            $ref: "#/definitions/dto.TagDTO"
+      - description: Tag Data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TagDTO'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Create new Tag
       tags:
-        - tags
+      - tags
   /tags/{id}:
     delete:
       consumes:
-        - application/json
+      - application/json
       description: DELETE the Tag
       parameters:
-        - description: Tag ID
-          example: 1
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Tag ID
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: DELETE TAG
       tags:
-        - tags
+      - tags
     get:
       consumes:
-        - application/json
+      - application/json
       description: Get Detail the Tag
       parameters:
-        - description: Tag ID
-          example: 1
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Tag ID
+        example: 1
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       summary: GET DETAIL TAG
       tags:
-        - tags
+      - tags
     put:
       consumes:
-        - application/json
+      - application/json
       description: UPDATE the Tag
       parameters:
-        - description: Tag ID
-          example: 1
-          format: int64
-          in: path
-          name: id
-          required: true
-          type: integer
-        - description: Tag update data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/dto.TagDTO"
+      - description: Tag ID
+        example: 1
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Tag update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TagDTO'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: UPDATE TAG
       tags:
-        - tags
+      - tags
   /users/login:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Authenticate user and get access token
       parameters:
-        - description: Login credentials
-          in: body
-          name: input
-          required: true
-          schema:
-            $ref: "#/definitions/handlers.LoginRequest"
+      - description: Login credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       summary: User login
       tags:
-        - users
+      - users
   /users/register:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Create a new user account
       parameters:
-        - description: User registration data
-          in: body
-          name: input
-          required: true
-          schema:
-            $ref: "#/definitions/dto.UserRequestDTO"
+      - description: User registration data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRequestDTO'
       produces:
-        - application/json
+      - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: "#/definitions/dto.ResponseSuccessDTO"
+            $ref: '#/definitions/dto.ResponseSuccessDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ResponseErrorDTO"
+            $ref: '#/definitions/dto.ResponseErrorDTO'
       summary: Register a new user
       tags:
-        - users
+      - users
 securityDefinitions:
   BearerAuth:
     in: header

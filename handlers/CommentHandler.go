@@ -61,8 +61,8 @@ func (h *CommentHandler) Create(c *gin.Context){
 }
 
 // Tag godoc
-// @Summary Create Comment
-// @Description create a new a comment
+// @Summary Delete Comment
+// @Description Delete a new a comment
 // @Tags Comments
 // @Accept json
 // @Produce json

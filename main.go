@@ -21,7 +21,7 @@ import (
 // @contact.email fajar@example.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:8080
+// @host localhost:8081
 // @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -48,21 +48,25 @@ func main() {
 	blogRepo := repository.NewBlogRepository(db)
 	commentRepo := repository.NewCommentRepository(db)
 	viewBlogRepo := repository.NewViewBlogRepository(db)
+	dashboardRepo := repository.NewDashboardRepository(db)
 
-
+	tagService := services.NewTagService(tagRepo,viewBlogRepo)
 	blogService := services.NewBlogService(blogRepo,viewBlogRepo)
+	dashboardService := services.NewDashboardService(dashboardRepo)
 
 	userHandler := handlers.NewUserHandler(userRepo)
-	tagHandler := handlers.NewTagHandler(tagRepo)
+	tagHandler := handlers.NewTagHandler(tagService)
 	blogHandler := handlers.NewBlogHandler(blogService)
 	commentHandler := handlers.NewCommentHandler(commentRepo)
-	
+	dashboardHandler := handlers.NewDashboardHandler(dashboardService)
+
 	version := r.Group("/api/v1")
 	{
 		routes.UserRoutes(version,userHandler)
 		routes.TagRoute(version,tagHandler)
 		routes.BlogRoutes(version,blogHandler)
 		routes.CommentRouter(version, commentHandler)
+		routes.DashboardRoute(version, dashboardHandler)
 	}
 
 

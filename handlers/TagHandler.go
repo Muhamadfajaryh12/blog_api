@@ -7,17 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/muhamadfajaryh12/api_blogs/dto"
 	"github.com/muhamadfajaryh12/api_blogs/helpers"
-	"github.com/muhamadfajaryh12/api_blogs/mapper"
 	"github.com/muhamadfajaryh12/api_blogs/models"
-	"github.com/muhamadfajaryh12/api_blogs/repository"
+	"github.com/muhamadfajaryh12/api_blogs/services"
 )
 
 type TagHandler struct {
-	Repo repository.TagRepository
+	tagService services.TagService
 }
 
-func NewTagHandler(repo repository.TagRepository) *TagHandler{
-	return &TagHandler{Repo: repo}
+func NewTagHandler(tagService services.TagService) *TagHandler{
+	return &TagHandler{tagService: tagService}
 }
 
 // Tag godoc
@@ -45,7 +44,7 @@ func (h *TagHandler) Create(c *gin.Context){
 		Tag: input.Tag,
 	}
 	
-	result,err := h.Repo.Create(tag)
+	result,err := h.tagService.Create(tag)
 	if err != nil{
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "Internal server error"})
 		return
@@ -70,24 +69,17 @@ func (h *TagHandler) Create(c *gin.Context){
 // @Failure 500 {object} dto.ResponseErrorDTO
 // @Router /tags [get]
 func (h *TagHandler) GetAll(c *gin.Context){
-	var tag []models.Tags
-	result, err := h.Repo.GetAll(tag)
-
+	result, err := h.tagService.GetAll()
 
 	if err != nil{
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 
-	var response []dto.TagResponseDTO
-	for _,t := range result {
-		response = append(response, mapper.TagRespose(t))
-	}
-
 	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
 		Status: http.StatusOK,
 		Message: "Fetched succesfully",
-		Data: response,
+		Data: result,
 	})
 }
 
@@ -112,20 +104,16 @@ func (h *TagHandler) GetById(c *gin.Context){
 		return
 	}
 	
-	var tag models.Tags
-
-	result,err := h.Repo.GetById(uint64(id),tag)
+	result,err := h.tagService.GetDetail(uint64(id))
 	if err != nil {
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
 	}
 
-	response := mapper.TagDetailResponse(result)
-
 	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
 		Status: http.StatusOK,
 		Message: "Fetched succesfully",
-		Data: response,
+		Data: result,
 	})
 }
 
@@ -144,8 +132,8 @@ func (h *TagHandler) GetById(c *gin.Context){
 // @Failure 500 {object} dto.ResponseErrorDTO
 // @Router /tags/{id} [put]
 func (h *TagHandler) Update(c *gin.Context){
-	id := c.Param("id")
-	
+	ParamId := c.Param("id")
+	id, err := strconv.Atoi(ParamId)
 	var inputTag models.Tags
 	if err := c.ShouldBind(&inputTag);
 	err != nil{
@@ -153,7 +141,7 @@ func (h *TagHandler) Update(c *gin.Context){
 		return
 	}
 
-	result,err := h.Repo.Update(id, inputTag)
+	result,err := h.tagService.Update(uint64(id), inputTag)
 	if err != nil{
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return
@@ -180,9 +168,9 @@ func (h *TagHandler) Update(c *gin.Context){
 // @Failure 500 {object} dto.ResponseErrorDTO
 // @Router /tags/{id} [delete]
 func (h *TagHandler) Delete(c *gin.Context){
-	id := c.Param("id")
-
-	result,err := h.Repo.Delete(id)
+	ParamId := c.Param("id")
+	id, err := strconv.Atoi(ParamId)
+	result,err := h.tagService.Delete(uint64(id))
 	if err != nil{
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return

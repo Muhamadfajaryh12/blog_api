@@ -390,7 +390,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "create a new a comment",
+                "description": "Delete a new a comment",
                 "consumes": [
                     "application/json"
                 ],
@@ -400,7 +400,7 @@ const docTemplate = `{
                 "tags": [
                     "Comments"
                 ],
-                "summary": "Create Comment",
+                "summary": "Delete Comment",
                 "parameters": [
                     {
                         "type": "integer",
@@ -412,6 +412,52 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseSuccessDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseErrorDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "GET DASHBOARD",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "GET DASHBOARD",
                 "responses": {
                     "200": {
                         "description": "OK",

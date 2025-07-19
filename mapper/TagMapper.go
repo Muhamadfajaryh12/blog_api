@@ -12,12 +12,7 @@ func TagRespose(tag models.Tags) dto.TagResponseDTO{
 		}	
 }
 
-func TagDetailResponse(tag models.Tags) dto.TagDetailResponseDTO{
-	var blogs []dto.BlogResponseDTO
-	for _, b := range tag.Blogs {
-		blogs = append(blogs,BlogResponse(b))
-	}
-
+func TagDetailResponse(tag models.Tags, blogs []dto.BlogResponseDTO) dto.TagDetailResponseDTO{
 	return dto.TagDetailResponseDTO{
 		ID:tag.ID,
 		Tag:tag.Tag,
