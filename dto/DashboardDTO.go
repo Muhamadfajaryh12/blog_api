@@ -1,10 +1,11 @@
 package dto
 
 type DashboardDTO struct {
-	CountView    int64        `json:"count_view"`
-	CountBlog    int64        `json:"count_blog"`
-	CountComment int64        `json:"count_comment"`
-	CoutViewWeek []ViewDayDTO `json:"view_week"`
+	CountView        int64           `json:"count_view"`
+	CountBlog        int64           `json:"count_blog"`
+	CountComment     int64           `json:"count_comment"`
+	CoutViewWeek     []ViewDayDTO    `json:"view_week"`
+	CountCommentWeek []CommentDayDTO `json:"comment_week"`
 }
 
 type ViewDayDTO struct {

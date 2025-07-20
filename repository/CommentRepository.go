@@ -20,8 +20,12 @@ func NewCommentRepository(db *gorm.DB) CommentRepository{
 
 func (r *commentRepo) Create(comment models.Comments)(models.Comments,error){
 	err := r.db.Create(&comment).Error
-	if err != nil{
+		if err != nil{
 		return comment, err
+	}
+	err = r.db.Preload("Users").First(&comment, comment.ID).Error
+	if err != nil{
+		return  comment, err
 	}
 	return comment, nil
 }

@@ -10,6 +10,7 @@ type DashboardRepository interface{
 	CountBlog(id uint64)(int64,error)
 	CountComment(id uint64)(int64,error)
 	CountViewWeek(id uint64)([]dto.ViewDayDTO, error)
+	CountCommentWeek(id uint64)([]dto.CommentDayDTO, error)
 }
 
 type dashboardRepo struct {
@@ -87,4 +88,29 @@ func (r *dashboardRepo) CountViewWeek(id uint64)([]dto.ViewDayDTO, error){
 		return []dto.ViewDayDTO{}, err
 	}
 	return results, err
+}
+
+func (r *dashboardRepo) CountCommentWeek(id uint64)([]dto.CommentDayDTO, error){
+	var result []dto.CommentDayDTO
+	query :=`
+	SELECT
+		DATE_FORMAT(d.date, '%b %d') as date,
+		COALESCE(COUNT(comments.id),0) as count_comment
+	FROM (
+		SELECT CURDATE() - INTERVAL n DAY AS date
+		FROM (
+			SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5
+			UNION SELECT 6
+		) AS numbers
+	) AS d
+	LEFT JOIN comments ON DATE(comments.created_at) = d.date
+	LEFT JOIN blogs ON blogs.id = comments.blog_id AND blogs.user_id = ?
+	GROUP BY d.date
+	ORDER BY d.date ASC
+	`
+	err := r.db.Raw(query,id).Scan(&result).Error
+	if err != nil{
+		return []dto.CommentDayDTO{}, err
+	}
+	return result, err
 }

@@ -38,12 +38,14 @@ func (s *dashboardService) GetDashboard(id uint64)(dto.DashboardDTO, error){
 		return dto.DashboardDTO{}, err
 	}
 
+	count_comment_week, err := s.dashboardRepo.CountCommentWeek(id)
 	
 	response := dto.DashboardDTO{
 		CountView: count_view,
 		CountBlog: count_blog,
 		CountComment: count_comment,
 		CoutViewWeek: count_view_week,
+		CountCommentWeek: count_comment_week,
 	}
 
 	return response,nil

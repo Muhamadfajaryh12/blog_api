@@ -40,11 +40,7 @@ func BlogDetailResponse(blog models.Blogs, viewCount int64) dto.BlogDetailRespon
 	var comments []dto.CommentResponseDTO
 
 	for _,c := range blog.Comments {
-		comments = append(comments, dto.CommentResponseDTO{
-			ID: c.ID,
-			Content: c.Content,
-			Sender: c.Users.Name,
-		})
+		comments = append(comments,CommentMapper(c))
 	}
 	
 	return dto.BlogDetailResponseDTO{

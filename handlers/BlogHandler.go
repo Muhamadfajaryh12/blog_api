@@ -39,6 +39,21 @@ func NewBlogHandler(blogService services.BlogService) * BlogHandler{
 // @Router /blogs [post]
 func (h *BlogHandler) Create(c *gin.Context){
 	var input dto.BlogRequestDTO
+	userIDRaw, exists := c.Get("UserID")
+	
+	if !exists {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "User ID not found in token"})
+		return
+	}
+
+	floatID, ok := userIDRaw.(float64)
+	if !ok {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "Invalid user ID type"})
+		return
+	}
+
+	userID := uint(floatID)
+
 	if err := c.ShouldBind(&input); err != nil {
 		helpers.ErrorHandle(c, helpers.BadRequestError{Message: err.Error()})
 		return
@@ -69,7 +84,7 @@ func (h *BlogHandler) Create(c *gin.Context){
 		Title: input.Title,
 		Content: input.Content,
 		Image:  filePath,
-		UserID: uint(input.UserID),
+		UserID: userID,
 		Tags:tags,
 	}
 	
@@ -162,6 +177,22 @@ func (h *BlogHandler) GetDetail(c *gin.Context){
 // @Router /blogs/{id} [put]
 func (h *BlogHandler) Update(c *gin.Context){
 	ParamId := c.Param("id")
+	userIDRaw, exists := c.Get("UserID")
+	
+	if !exists {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "User ID not found in token"})
+		return
+	}
+
+	floatID, ok := userIDRaw.(float64)
+	if !ok {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "Invalid user ID type"})
+		return
+	}
+
+	userID := uint(floatID)
+
+
 	var blog models.Blogs
 	var input dto.BlogRequestDTO
 	var filePath string
@@ -204,7 +235,7 @@ func (h *BlogHandler) Update(c *gin.Context){
 		Content: input.Content,
 		Image: filePath,
 		Tags:tags,
-		UserID: uint(input.UserID),
+		UserID: userID,
 	}
 
 	result, err := h.blogService.Update(uint64(id), blog)

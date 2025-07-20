@@ -854,14 +854,13 @@ const docTemplate = `{
         "dto.CommentRequestDTO": {
             "type": "object",
             "required": [
-                "blod_id",
-                "content",
-                "user_id"
+                "blog_id",
+                "content"
             ],
             "properties": {
-                "blod_id": {
+                "blog_id": {
                     "type": "integer",
-                    "example": 2
+                    "example": 4
                 },
                 "content": {
                     "type": "string",
@@ -869,10 +868,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer",
-                    "example": 1
                 }
             }
         },

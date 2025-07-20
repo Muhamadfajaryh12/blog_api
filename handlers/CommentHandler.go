@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/muhamadfajaryh12/api_blogs/dto"
 	"github.com/muhamadfajaryh12/api_blogs/helpers"
+	"github.com/muhamadfajaryh12/api_blogs/mapper"
 	"github.com/muhamadfajaryh12/api_blogs/models"
 	"github.com/muhamadfajaryh12/api_blogs/repository"
 )
@@ -35,6 +36,20 @@ func NewCommentHandler(repo repository.CommentRepository) * CommentHandler{
 func (h *CommentHandler) Create(c *gin.Context){
 	var input dto.CommentRequestDTO
 
+	userIDRaw, exists := c.Get("UserID")
+	if !exists {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "User ID not found in token"})
+		return
+	}
+
+	floatID, ok := userIDRaw.(float64)
+	if !ok {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "Invalid user ID type"})
+		return
+	}
+
+	userID := uint64(floatID)
+
 	err := c.ShouldBind(&input)
 	if err != nil {
 		helpers.ErrorHandle(c, helpers.BadRequestError{Message:err.Error()})
@@ -43,7 +58,7 @@ func (h *CommentHandler) Create(c *gin.Context){
 
 	comment := models.Comments{
 		Content: input.Content,
-		UserID:  input.UserID,
+		UserID:  userID,
 		BlogID:  input.BlogID,
 	}
 
@@ -53,10 +68,11 @@ func (h *CommentHandler) Create(c *gin.Context){
 		return
 	}
 
+	response := mapper.CommentMapper(result)
 	c.JSON(http.StatusCreated,dto.ResponseSuccessDTO{
 		Status: http.StatusCreated,
 		Message: "Created successfully",
-		Data: result,
+		Data: response,
 	})
 }
 
