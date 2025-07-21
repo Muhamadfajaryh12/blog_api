@@ -25,7 +25,7 @@ func (r *dashboardRepo) CountViewAll(id uint64)(int64, error){
 	var total int64
 	query := `SELECT COALESCE(SUM(view_blogs.view), 0)
 	FROM view_blogs
-	LEFT JOIN blogs  ON blogs.id = view_blogs.id
+	LEFT JOIN blogs  ON blogs.id = view_blogs.blog_id
 	WHERE blogs.user_id = ?
 	`
 	err := r.db.Raw(query,id).Scan(&total).Error

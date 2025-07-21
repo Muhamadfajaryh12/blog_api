@@ -10,7 +10,7 @@ func CommentRouter(r *gin.RouterGroup, commentHandler *handlers.CommentHandler )
 	comments := r.Group("comments")
 	comments.Use(middlewares.Authorization())
 	{
-		comments.POST("/", commentHandler.Create)
+		comments.POST("", commentHandler.Create)
 		comments.DELETE("/:id",commentHandler.Delete)
 	}
 }

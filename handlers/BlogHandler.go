@@ -284,3 +284,18 @@ func (h *BlogHandler) Delete(c *gin.Context){
 		Data: result,
 	})
 }
+
+func (h *BlogHandler) Search(c *gin.Context){
+	keyword:= c.Query("search")
+
+	result, err := h.blogService.Search(keyword)
+	if err != nil {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: err.Error()})
+	}
+
+	c.JSON(http.StatusOK, dto.ResponseSuccessDTO{
+		Status: http.StatusOK,
+		Message: "Fetched successfully",
+		Data: result,
+	})
+}

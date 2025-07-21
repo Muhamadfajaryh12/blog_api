@@ -29,7 +29,7 @@ func (r* viewBlogRepo) Create(viewBlog models.ViewBlog)(models.ViewBlog, error){
 
 func (r* viewBlogRepo) GetCountView(id int64)(int64, error){
 	var count int64
-	err := r.db.Model(&models.ViewBlog{}).Where("id = ?",id).Count(&count).Error
+	err := r.db.Model(&models.ViewBlog{}).Where("blog_id = ?",id).Count(&count).Error
 	if err != nil {
 		return 0, err
 	}

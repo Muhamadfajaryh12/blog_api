@@ -16,7 +16,7 @@ type BlogRepository interface {
 	GetDetail(id uint64)(models.Blogs, error)
 	Update(id uint64, blog models.Blogs)(models.Blogs, error)
 	Delete(id uint64)(models.Blogs, error)
-	Search(keyword string, blog []models.Blogs)([]models.Blogs, error)
+	Search(keyword string)([]models.Blogs, error)
 }
 
 type blogRepo struct {
@@ -138,7 +138,8 @@ func (r *blogRepo) Delete(id uint64)(models.Blogs, error){
 	return blog,nil
 }
 
-func (r *blogRepo) Search(keyword string, blog []models.Blogs)([]models.Blogs,error){
+func (r *blogRepo) Search(keyword string)([]models.Blogs,error){
+	var blog []models.Blogs
 	err := r.db.Preload("Tags").Preload("Users").Omit("Comments").Where("title LIKE ?", "%"+keyword+"%").Find(&blog).Error
 	if err != nil {
 		return blog, err

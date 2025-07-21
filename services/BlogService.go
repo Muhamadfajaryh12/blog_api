@@ -13,6 +13,7 @@ type BlogService interface{
 	GetDetail(id uint64)(dto.BlogDetailResponseDTO, error)
 	Update(id uint64, request models.Blogs)(dto.BlogDetailResponseDTO, error)
 	Delete(id uint64)(dto.BlogDetailResponseDTO, error)
+	Search(keyword string)([]dto.BlogResponseDTO, error)
 }
 
 type blogService struct {
@@ -110,5 +111,18 @@ func (s *blogService) Delete(id uint64) (dto.BlogDetailResponseDTO, error){
 		return dto.BlogDetailResponseDTO{},err
 	}
 	response := mapper.BlogDetailResponse(blog,0)
+	return response,nil
+}
+
+func (s *blogService) Search(keyword string)([]dto.BlogResponseDTO,error){
+	var response []dto.BlogResponseDTO
+	blogs,err := s.blogRepo.Search(keyword)
+	if err != nil {
+		return []dto.BlogResponseDTO{},err
+	}
+
+	for _, blog := range blogs {
+		response = append(response,mapper.BlogResponse(blog,0))
+	}
 	return response,nil
 }
