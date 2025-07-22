@@ -122,7 +122,8 @@ func (s *blogService) Search(keyword string)([]dto.BlogResponseDTO,error){
 	}
 
 	for _, blog := range blogs {
-		response = append(response,mapper.BlogResponse(blog,0))
+		viewCount, _ := s.viewRepo.GetCountView(int64(blog.ID))
+		response = append(response,mapper.BlogResponse(blog,viewCount))
 	}
 	return response,nil
 }

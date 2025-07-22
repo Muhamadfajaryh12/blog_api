@@ -20,9 +20,7 @@ type BlogResponseDTO struct {
 	Author  string ` json:"author"`
 	View 	int64 	`json:"view"`
 	Date time.Time `json:"date"`
-	Tags    []struct {
-		Tag string `json:"tag"`
-	} `json:"tags"`
+	Tags    []TagResponseDTO `json:"tags"`
 }
 
 type BlogDetailResponseDTO struct {
@@ -33,9 +31,7 @@ type BlogDetailResponseDTO struct {
 	Author  string `json:"author"`
 	View 	int64 	`json:"view"`
 	Date time.Time `json:"date"`
-	Tags    []struct {
-		Tag string `json:"tag"`
-	} `json:"tags"`
+	Tags    []TagResponseDTO `json:"tags"`
 	Comment []CommentResponseDTO `json:"comments"`
 }
 

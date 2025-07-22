@@ -6,12 +6,13 @@ import (
 )
 
 func BlogResponse(blog models.Blogs, viewCount int64 ) dto.BlogResponseDTO{
-	var tags []struct{
-		Tag string `json:"tag"`
-	}
+	var tags []dto.TagResponseDTO
 
 	for _, t := range blog.Tags {
-		tags = append(tags, struct{Tag string "json:\"tag\""}{Tag:t.Tag})
+		tags = append(tags,dto.TagResponseDTO{
+			ID: t.ID,
+			Tag: t.Tag,
+		})
 	}
 
 	return dto.BlogResponseDTO{
@@ -29,13 +30,15 @@ func BlogResponse(blog models.Blogs, viewCount int64 ) dto.BlogResponseDTO{
 func BlogDetailResponse(blog models.Blogs, viewCount int64) dto.BlogDetailResponseDTO{
 	
 	// Manipulasi data tag
-	var tags []struct{
-		Tag string `json:"tag"`
-	}
+	var tags []dto.TagResponseDTO
 
 	for _, t := range blog.Tags {
-		tags = append(tags, struct{Tag string "json:\"tag\""}{Tag:t.Tag})
+		tags = append(tags,dto.TagResponseDTO{
+			ID: t.ID,
+			Tag: t.Tag,
+		})
 	}
+
 
 	var comments []dto.CommentResponseDTO
 

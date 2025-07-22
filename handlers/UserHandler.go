@@ -94,7 +94,7 @@ func (h *UserHandler) Login(c *gin.Context){
 		return 
 	}
 
-	token,err := helpers.GenerateToken(result.ID)
+	token,err := helpers.GenerateToken(result.ID, result.Role)
 	if err != nil {
 		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
 		return

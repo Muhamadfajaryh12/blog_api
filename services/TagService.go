@@ -54,7 +54,7 @@ func (s *tagService) GetDetail(id uint64)(dto.TagDetailResponseDTO,error){
 	var blogs []dto.BlogResponseDTO
 	for _,blog := range tag.Blogs {
 		 viewCount,_ := s.viewRepo.GetCountView(int64(blog.ID))
-		blogs = append(blogs, mapper.BlogResponse(blog, int64(viewCount)))
+		blogs = append(blogs, mapper.BlogResponse(blog, viewCount))
 	}
 	response := mapper.TagDetailResponse(tag,blogs)
 	
