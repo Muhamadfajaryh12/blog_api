@@ -13,6 +13,7 @@ func BlogRoutes(r *gin.RouterGroup, blogHandler *handlers.BlogHandler){
 		blogs.GET("/:id",blogHandler.GetDetail)
 		blogs.GET("/search",blogHandler.Search)
 		blogsAuth := blogs.Use(middlewares.Authorization())
+		blogsAuth.GET("/author",blogHandler.GetAllByAuthor)
 		blogsAuth.POST("",blogHandler.Create)
 		blogsAuth.PUT("/:id",blogHandler.Update)
 		blogsAuth.DELETE("/:id",blogHandler.Delete)

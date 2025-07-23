@@ -14,6 +14,7 @@ type BlogService interface{
 	Update(id uint64, request models.Blogs)(dto.BlogDetailResponseDTO, error)
 	Delete(id uint64)(dto.BlogDetailResponseDTO, error)
 	Search(keyword string)([]dto.BlogResponseDTO, error)
+	GetAllByAuthor(id uint64)([]dto.BlogResponseDTO,error)
 }
 
 type blogService struct {
@@ -126,4 +127,18 @@ func (s *blogService) Search(keyword string)([]dto.BlogResponseDTO,error){
 		response = append(response,mapper.BlogResponse(blog,viewCount))
 	}
 	return response,nil
+}
+
+func (s *blogService) GetAllByAuthor(id uint64) ([]dto.BlogResponseDTO, error){
+	blogs, err := s.blogRepo.GetAllByAuthor(id)
+	if err != nil {
+		return []dto.BlogResponseDTO{},err
+	}
+
+	var result []dto.BlogResponseDTO
+	for _, blog := range blogs {
+		viewCount, _ := s.viewRepo.GetCountView(int64(blog.ID))
+		result = append(result, mapper.BlogResponse(blog, viewCount))
+	}
+	return result,nil
 }

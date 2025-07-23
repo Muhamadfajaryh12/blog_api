@@ -79,7 +79,8 @@ func (r *dashboardRepo) CountViewWeek(id uint64)([]dto.ViewDayDTO, error){
 		) AS numbers
 	) AS d
 	LEFT JOIN view_blogs v ON DATE(v.created_at) = d.date
-	LEFT JOIN blogs b ON b.id = v.blog_id AND b.user_id = ?
+	LEFT JOIN blogs b ON b.id = v.blog_id 
+	WHERE b.user_id = ?
 	GROUP BY d.date
 	ORDER BY d.date ASC
 	`
@@ -104,7 +105,8 @@ func (r *dashboardRepo) CountCommentWeek(id uint64)([]dto.CommentDayDTO, error){
 		) AS numbers
 	) AS d
 	LEFT JOIN comments ON DATE(comments.created_at) = d.date
-	LEFT JOIN blogs ON blogs.id = comments.blog_id AND blogs.user_id = ?
+	LEFT JOIN blogs ON blogs.id = comments.blog_id 
+	WHERE blogs.user_id = ? 
 	GROUP BY d.date
 	ORDER BY d.date ASC
 	`

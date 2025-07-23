@@ -18,5 +18,5 @@ type LoginResponseDTO struct {
 	ID    uint64 `json:"id"`
 	Name  string `json:"name" example:"test"`
 	Role  string `json:"role" example:"admin"`
-	Token string `json:"token" exampl:"123"`
+	Token string `json:"token" example:"123"`
 }

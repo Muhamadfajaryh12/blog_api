@@ -17,6 +17,7 @@ type BlogRepository interface {
 	Update(id uint64, blog models.Blogs)(models.Blogs, error)
 	Delete(id uint64)(models.Blogs, error)
 	Search(keyword string)([]models.Blogs, error)
+	GetAllByAuthor(id uint64)([]models.Blogs,error)
 }
 
 type blogRepo struct {
@@ -41,7 +42,7 @@ func (r *blogRepo) Create(inputBlog models.Blogs)(models.Blogs, error){
 
 func (r *blogRepo) GetAll()([]models.Blogs, error){
 	var blog []models.Blogs
-	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("ID DESC").Find(&blog).Error
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("RAND()").Find(&blog).Error
 	if err != nil{
 		return blog, err
 	}
@@ -145,4 +146,13 @@ func (r *blogRepo) Search(keyword string)([]models.Blogs,error){
 		return blog, err
 	}
 	return blog,nil
+}
+
+func (r *blogRepo) GetAllByAuthor(id uint64)([]models.Blogs, error){
+	var blog []models.Blogs
+	err:= r.db.Preload("Tags").Preload("Users").Omit("Comments").Order("ID DESC").Where("user_id =  ?", id).Find(&blog).Error
+	if err != nil{
+		return blog, err
+	}
+	return blog, nil
 }

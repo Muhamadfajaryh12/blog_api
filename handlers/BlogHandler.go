@@ -299,3 +299,32 @@ func (h *BlogHandler) Search(c *gin.Context){
 		Data: result,
 	})
 }
+
+
+func (h *BlogHandler) GetAllByAuthor(c *gin.Context){
+	userIDRaw, exists := c.Get("UserID")
+	if !exists {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "User ID not found in token"})
+		return
+	}
+
+	floatID, ok := userIDRaw.(float64)
+	if !ok {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message: "Invalid user ID type"})
+		return
+	}
+
+	userID := uint64(floatID)
+
+	blogs,err := h.blogService.GetAllByAuthor(userID)
+	if err != nil {
+		helpers.ErrorHandle(c, helpers.InternalServerError{Message:err.Error()})
+		return
+	}
+	
+	c.JSON(http.StatusOK,dto.ResponseSuccessDTO{
+		Status: http.StatusOK,
+		Message: "Fetched successfully",
+		Data:blogs,
+	})
+}
